@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ApolloClient, ApolloQueryResult, FetchResult, MutationOptions, NormalizedCacheObject, OperationVariables, QueryOptions } from '@apollo/client';
 import { Octokit } from '@octokit/rest';
-import { ApolloClient, ApolloQueryResult, FetchResult, MutationOptions, NormalizedCacheObject, OperationVariables, QueryOptions } from 'apollo-boost';
 import * as vscode from 'vscode';
 import Logger from '../common/logger';
 import { RateLimit } from './graphql';
@@ -96,15 +96,15 @@ export class RateLogger {
 export class LoggingApolloClient {
 	constructor(private readonly _graphql: ApolloClient<NormalizedCacheObject>, private _rateLogger: RateLogger) { };
 
-	query<T = any, TVariables = OperationVariables>(options: QueryOptions<TVariables>): Promise<ApolloQueryResult<T>> {
+	query<T = any, TVariables = OperationVariables>(options: QueryOptions<OperationVariables>): Promise<ApolloQueryResult<T>> {
 		this._rateLogger.log((options.query.definitions[0] as { name: { value: string } | undefined }).name?.value);
 		const result = this._graphql.query(options);
 		this._rateLogger.logGraphqlRateLimit(result as any);
 		return result;
 	}
 
-	mutate<T = any, TVariables = OperationVariables>(options: MutationOptions<T, TVariables>): Promise<FetchResult<T>> {
-		this._rateLogger.log(options.context);
+	mutate<T = any, TVariables = OperationVariables>(options: MutationOptions<T, OperationVariables>): Promise<FetchResult<T>> {
+		this._rateLogger.log(String(options.context));
 		const result = this._graphql.mutate(options);
 		this._rateLogger.logGraphqlRateLimit(result as any);
 		return result;

@@ -1,15 +1,13 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { inspect } from 'util';
 import { Octokit } from '@octokit/rest';
-import {
-	ApolloQueryResult,
-	QueryOptions,
-	DocumentNode,
-	OperationVariables,
-	MutationOptions,
-	FetchResult,
-} from 'apollo-boost';
 import { SinonSandbox, SinonStubbedInstance } from 'sinon';
 import equals from 'fast-deep-equal';
+import { ApolloQueryResult, DocumentNode, FetchResult, MutationOptions, OperationVariables, QueryOptions } from '@apollo/client';
 
 interface RecordedQueryResult<T> {
 	variables?: OperationVariables;

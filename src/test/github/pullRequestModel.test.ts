@@ -15,10 +15,10 @@ import { SinonSandbox, createSandbox } from 'sinon';
 import { PullRequestBuilder } from '../builders/rest/pullRequestBuilder';
 import { MockTelemetry } from '../mocks/mockTelemetry';
 import { MockGitHubRepository } from '../mocks/mockGitHubRepository';
-import { NetworkStatus } from 'apollo-client';
 import { Resource } from '../../common/resources';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { GitHubServerType } from '../../common/authentication';
+import { NetworkStatus } from '@apollo/client';
 const queries = require('../../github/queries.gql');
 
 const telemetry = new MockTelemetry();
@@ -128,7 +128,6 @@ describe('PullRequestModel', function () {
 						},
 					},
 					loading: false,
-					stale: false,
 					networkStatus: NetworkStatus.ready,
 				},
 			);

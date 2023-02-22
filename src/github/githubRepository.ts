@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ApolloQueryResult, FetchResult, MutationOptions, NetworkStatus, QueryOptions } from 'apollo-boost';
+import { ApolloQueryResult, FetchResult, MutationOptions, NetworkStatus, QueryOptions } from '@apollo/client';
 import * as vscode from 'vscode';
 import { AuthenticationError, AuthProvider, GitHubServerType, isSamlError } from '../common/authentication';
 import Logger from '../common/logger';

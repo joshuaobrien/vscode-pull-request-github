@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { Octokit } from '@octokit/rest';
-import { ApolloClient, InMemoryCache } from 'apollo-boost';
-import { setContext } from 'apollo-link-context';
-import { createHttpLink } from 'apollo-link-http';
 import fetch from 'cross-fetch';
 import * as vscode from 'vscode';
 import { AuthProvider } from '../common/authentication';

@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { SinonSandbox } from 'sinon';
-import { QueryOptions, ApolloQueryResult, FetchResult, MutationOptions, NetworkStatus, OperationVariables } from 'apollo-boost';
 
 import { GitHubRepository } from '../../github/githubRepository';
 import { QueryProvider } from './queryProvider';
@@ -21,6 +20,7 @@ import { MockTelemetry } from './mockTelemetry';
 import { Uri } from 'vscode';
 import { LoggingOctokit, RateLogger } from '../../github/loggingOctokit';
 import { MockExtensionContext } from './mockExtensionContext';
+import { ApolloQueryResult, FetchResult, MutationOptions, NetworkStatus, OperationVariables, QueryOptions } from '@apollo/client';
 const queries = require('../../github/queries.gql');
 
 export class MockGitHubRepository extends GitHubRepository {
@@ -81,7 +81,7 @@ export class MockGitHubRepository extends GitHubRepository {
 					number: prNumber,
 				},
 			},
-			{ data: responses.pullRequest, loading: false, stale: false, networkStatus: NetworkStatus.ready },
+			{ data: responses.pullRequest, loading: false, networkStatus: NetworkStatus.ready },
 		);
 
 		this.queryProvider.expectGraphQLQuery(
@@ -93,7 +93,7 @@ export class MockGitHubRepository extends GitHubRepository {
 					number: prNumber,
 				},
 			},
-			{ data: responses.timelineEvents, loading: false, stale: false, networkStatus: NetworkStatus.ready },
+			{ data: responses.timelineEvents, loading: false, networkStatus: NetworkStatus.ready },
 		);
 
 		this.queryProvider.expectGraphQLQuery(
@@ -105,7 +105,7 @@ export class MockGitHubRepository extends GitHubRepository {
 					number: prNumber,
 				}
 			},
-			{ data: responses.latestReviewCommit, loading: false, stale: false, networkStatus: NetworkStatus.ready },
+			{ data: responses.latestReviewCommit, loading: false, networkStatus: NetworkStatus.ready },
 		)
 
 		this._addPullRequestCommon(prNumber, headRef && headRef.target.oid, responses);
