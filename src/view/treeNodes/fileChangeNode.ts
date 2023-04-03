@@ -170,33 +170,34 @@ export class FileChangeNode extends TreeNode implements vscode.TreeItem2 {
 	}
 
 	public async markFileAsViewed() {
-		await this.pullRequest.markFileAsViewed(this.fileName);
+		await this.pullRequest.markFilesAsViewed([this.fileName]);
 		this.pullRequestManager.setFileViewedContext();
 	}
 
 	public async unmarkFileAsViewed() {
-		await this.pullRequest.unmarkFileAsViewed(this.fileName);
+		await this.pullRequest.unmarkFilesAsViewed([this.fileName]);
 		this.pullRequestManager.setFileViewedContext();
 	}
 
-	updateCheckbox(newState: vscode.TreeItemCheckboxState) {
+	private async markFile(node: FileChangeNode, newState: ViewedState.VIEWED | ViewedState.UNVIEWED) {
+		if (newState === ViewedState.VIEWED) {
+			await node.markFileAsViewed();
+		} else {
+			await node.unmarkFileAsViewed();
+		}
+	}
+
+	async updateCheckbox(newState: vscode.TreeItemCheckboxState, performMutation: boolean) {
 		const viewed = newState === vscode.TreeItemCheckboxState.Checked ? ViewedState.VIEWED : ViewedState.UNVIEWED;
 		this.updateViewed(viewed);
 
-		async function markFile(node: FileChangeNode) {
-			if (newState === vscode.TreeItemCheckboxState.Checked) {
-				await node.markFileAsViewed();
-			}
-			else {
-				await node.unmarkFileAsViewed();
-			}
+		if (performMutation) {
+			await this.markFile(this, viewed);
 		}
 
-		markFile(this).then(_ => {
-			if (this.parent instanceof TreeNode && !this.parent.updateParentCheckbox()) {
-				this.refresh(this);
-			}
-		});
+		if (this.parent instanceof TreeNode && !this.parent.updateParentCheckbox()) {
+			this.refresh(this);
+		}
 	}
 
 	updateShowOptions() {

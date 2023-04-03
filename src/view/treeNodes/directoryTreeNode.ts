@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import type { PullRequestModel } from '../../github/pullRequestModel';
 import { GitFileChangeNode, InMemFileChangeNode, RemoteFileChangeNode } from './fileChangeNode';
 import { TreeNode, TreeNodeParent } from './treeNode';
 
@@ -13,7 +14,7 @@ export class DirectoryTreeNode extends TreeNode implements vscode.TreeItem2 {
 	private pathToChild: Map<string, DirectoryTreeNode> = new Map();
 	public checkboxState?: { state: vscode.TreeItemCheckboxState, tooltip: string };
 
-	constructor(public parent: TreeNodeParent, public label: string) {
+	constructor(public parent: TreeNodeParent, public label: string, public pullRequestModel: PullRequestModel) {
 		super();
 		this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
 	}
@@ -109,7 +110,7 @@ export class DirectoryTreeNode extends TreeNode implements vscode.TreeItem2 {
 
 		let node = this.pathToChild.get(dir);
 		if (!node) {
-			node = new DirectoryTreeNode(this, dir);
+			node = new DirectoryTreeNode(this, dir, this.pullRequestModel);
 			this.pathToChild.set(dir, node);
 			this.children.push(node);
 		}
@@ -117,12 +118,30 @@ export class DirectoryTreeNode extends TreeNode implements vscode.TreeItem2 {
 		node.addPathRecc(tail, file);
 	}
 
-	updateCheckbox(newState: vscode.TreeItemCheckboxState) {
-		this.children.forEach(child => child.updateCheckbox(newState));
+	updateCheckbox(newState: vscode.TreeItemCheckboxState, performMutation: boolean) {
+		if (performMutation) {
+			const filenames = this.gatherPaths();
+
+			if (newState === vscode.TreeItemCheckboxState.Checked) {
+				this.pullRequestModel.markFilesAsViewed(filenames);
+			} else {
+				this.pullRequestModel.unmarkFilesAsViewed(filenames);
+			}
+		}
+
+		this.children.forEach(child => child.updateCheckbox(newState, false));
 
 		if (this.parent instanceof TreeNode && !this.parent.updateParentCheckbox()) {
 			this.refresh(this);
 		}
+	}
+
+	// recursively gathers the paths of all files in this directory and the directories below
+	private gatherPaths() {
+		const subDirectories = this.children.filter((child): child is DirectoryTreeNode => child instanceof DirectoryTreeNode);
+		const paths = this.children.filter((child): child is RemoteFileChangeNode | InMemFileChangeNode | GitFileChangeNode => !(child instanceof DirectoryTreeNode)).map(child => child.fileName);
+
+		return [...subDirectories.flatMap(subfolder => subfolder.gatherPaths()), ...paths];
 	}
 
 	public allChildrenViewed(): boolean {

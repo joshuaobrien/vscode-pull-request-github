@@ -18,7 +18,7 @@ export class FilesCategoryNode extends TreeNode implements vscode.TreeItem {
 	constructor(
 		public parent: TreeNodeParent,
 		private _reviewModel: ReviewModel,
-		_pullRequestModel: PullRequestModel
+		private _pullRequestModel: PullRequestModel
 	) {
 		super();
 		this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
@@ -62,7 +62,7 @@ export class FilesCategoryNode extends TreeNode implements vscode.TreeItem {
 		let nodes: TreeNode[];
 		const layout = vscode.workspace.getConfiguration('githubPullRequests').get<string>('fileListLayout');
 
-		const dirNode = new DirectoryTreeNode(this, '');
+		const dirNode = new DirectoryTreeNode(this, '', this._pullRequestModel);
 		this._reviewModel.localFileChanges.forEach(f => dirNode.addFile(f));
 		dirNode.finalize();
 		if (dirNode.label === '') {

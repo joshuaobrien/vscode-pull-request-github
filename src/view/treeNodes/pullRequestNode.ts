@@ -92,7 +92,7 @@ export class PRNode extends TreeNode implements vscode.CommentingRangeProvider {
 			const layout = vscode.workspace.getConfiguration(SETTINGS_NAMESPACE).get<string>(FILE_LIST_LAYOUT);
 			if (layout === 'tree') {
 				// tree view
-				const dirNode = new DirectoryTreeNode(this, '');
+				const dirNode = new DirectoryTreeNode(this, '', this.pullRequestModel);
 				this._fileChanges.forEach(f => dirNode.addFile(f));
 				dirNode.finalize();
 				if (dirNode.label === '') {

@@ -63,7 +63,7 @@ export abstract class TreeNode implements vscode.Disposable {
 		return [];
 	}
 
-	updateCheckbox(_newState: vscode.TreeItemCheckboxState): void { }
+	updateCheckbox(_newState: vscode.TreeItemCheckboxState, _performMutation = false): void { }
 
 	public updateParentCheckbox(): boolean { return false; }
 
